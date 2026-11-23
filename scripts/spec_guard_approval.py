@@ -40,7 +40,7 @@ class ApprovalError(ValueError):
     pass
 
 
-ALLOWED_BASES = {"main", "lab/app-required-check-v2"}
+ALLOWED_BASES = {"main", "lab/receipt-baseline"}
 
 def require(condition, reason):
     if not condition:
@@ -55,11 +55,12 @@ class Scope:
     base_sha: str
     head_sha: str
     paths_sha256: str
+    base_ref: str = "main"
 
     def message(self, approved_at: str) -> str:
         return (
             f"schema={SCHEMA}\nrepository={REPOSITORY}\npull_request={self.pr}\n"
-            f"comment_id={self.comment_id}\nowner_id={self.owner_id}\nbase_ref=main\n"
+            f"comment_id={self.comment_id}\nowner_id={self.owner_id}\nbase_ref={self.base_ref}\n"
             f"base_sha={self.base_sha}\nhead_sha={self.head_sha}\n"
             f"protected_paths_sha256={self.paths_sha256}\n"
             f"decision=approve-protected-scope\napproved_at={approved_at}\n"
@@ -93,7 +94,7 @@ def scope_from_github(pr, comment, expected_pr, expected_comment, owner_id, repo
     paths = protected_paths(repository, base["sha"], head["sha"])
     require(paths, "No protected paths require this receipt")
     digest = hashlib.sha256(b"\0".join(paths) + b"\0").hexdigest()
-    return Scope(expected_pr, expected_comment, owner_id, base["sha"], head["sha"], digest)
+    return Scope(expected_pr, expected_comment, owner_id, base["sha"], head["sha"], digest, base_ref=base["ref"])
 
 
 def verify(comment, scope: Scope, allowed_signers: Path, now: datetime):

@@ -2,7 +2,7 @@ name: Synthetic owner receipt
 
 on:
   pull_request_target:
-    branches: [main, lab/app-required-check-v2]
+    branches: [main, lab/receipt-baseline]
     types: [opened, synchronize, reopened]
 
 permissions:

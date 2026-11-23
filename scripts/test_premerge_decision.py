@@ -6,7 +6,7 @@ import premerge_decision as gate
 from test_spec_guard_approval import ApprovalFixture
 
 
-class PremergeDecisionTest(ApprovalFixture, unittest.TestCase):
+class PremergeDecisionFixture(ApprovalFixture):
     def setUp(self):
         super().setUp()
         self.verifier = self.root / "verifier"
@@ -30,6 +30,8 @@ class PremergeDecisionTest(ApprovalFixture, unittest.TestCase):
         )
         return gate.decision(**{**fields, **changes})["result"]
 
+
+class PremergeDecisionTest(PremergeDecisionFixture, unittest.TestCase):
     def test_same_sha_does_not_share_authorization_between_prs(self):
         receipt = self.sign()
         signature = self.verdict(receipt)

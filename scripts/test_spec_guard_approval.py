@@ -13,7 +13,7 @@ from unittest.mock import patch
 import spec_guard_approval as guard
 
 
-class SpecGuardApprovalTest(unittest.TestCase):
+class ApprovalFixture:
     def setUp(self):
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
@@ -32,7 +32,7 @@ class SpecGuardApprovalTest(unittest.TestCase):
         self.run_command("git", "-c", "user.name=Test", "-c", "user.email=test@example.invalid",
                          "commit", "-qm", "candidate")
         head = self.run_command("git", "rev-parse", "HEAD").strip()
-        self.pr = {"number": 7, "state": "open",
+        self.pr = {"number": 7, "state": "open", "draft": False,
                    "base": {"sha": base, "ref": "main", "repo": {"full_name": guard.REPOSITORY}},
                    "head": {"sha": head, "repo": {"full_name": guard.REPOSITORY}}}
         self.comment = {"id": 12, "issue_url": f"https://api.github.com/repos/{guard.REPOSITORY}/issues/7",
@@ -59,6 +59,8 @@ class SpecGuardApprovalTest(unittest.TestCase):
         self.run_command("ssh-keygen", "-Y", "sign", "-f", str(key or self.key), "-n", namespace, str(receipt))
         return {**self.comment, "body": message + Path(str(receipt) + ".sig").read_text()}
 
+
+class SpecGuardApprovalTest(ApprovalFixture, unittest.TestCase):
     def test_exact_owner_receipt_and_protected_path_digest(self):
         self.assertEqual(guard.protected_paths(self.repo, self.scope.base_sha, self.scope.head_sha),
                          [b"apps/admin/b.ts", b"apps/api/a.ts"])

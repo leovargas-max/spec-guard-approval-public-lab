@@ -40,6 +40,8 @@ class ApprovalError(ValueError):
     pass
 
 
+ALLOWED_BASES = {"main", "lab/app-required-check"}
+
 def require(condition, reason):
     if not condition:
         raise ApprovalError(reason)
@@ -80,7 +82,7 @@ def scope_from_github(pr, comment, expected_pr, expected_comment, owner_id, repo
     require(type(owner_id) is int and owner_id > 0, "Owner ID must be configured by a trusted operator")
     require(pr.get("number") == expected_pr and pr.get("state") == "open", "Unexpected or closed PR")
     base, head = pr["base"], pr["head"]
-    require(base["ref"] == "main" and base["repo"]["full_name"] == REPOSITORY
+    require(base["ref"] in ALLOWED_BASES and base["repo"]["full_name"] == REPOSITORY
             and head["repo"]["full_name"] == REPOSITORY, "Unexpected repository or base branch")
     require(comment.get("id") == expected_comment
             and comment.get("issue_url") == f"https://api.github.com/repos/{REPOSITORY}/issues/{expected_pr}",

@@ -6,7 +6,7 @@ import subprocess
 import sys
 from tempfile import TemporaryDirectory
 
-from spec_guard_approval import REPOSITORY, SCHEMA, protected_paths, read_github
+from spec_guard_approval import ALLOWED_BASES, REPOSITORY, SCHEMA, protected_paths, read_github
 
 
 pr_number = int(os.environ["LAB_PR"])
@@ -14,7 +14,7 @@ owner_id = int(os.environ["LAB_OWNER"])
 token = os.environ["GH_TOKEN"]
 pr = read_github(f"pulls/{pr_number}", token)
 if (pr["base"]["repo"]["full_name"] != REPOSITORY or pr["head"]["repo"]["full_name"] != REPOSITORY
-        or pr["base"]["ref"] != "main" or pr["state"] != "open"):
+        or pr["base"]["ref"] not in ALLOWED_BASES or pr["state"] != "open"):
     sys.exit("Unexpected lab PR")
 head = pr["head"]["sha"]
 base = pr["base"]["sha"]

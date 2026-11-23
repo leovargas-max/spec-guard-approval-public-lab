@@ -121,6 +121,7 @@ def verify(comment, scope: Scope, allowed_signers: Path, now: datetime):
             input=payload.encode("ascii"), capture_output=True, timeout=10,
         )
     require(result.returncode == 0, "Signature is not valid for the configured owner")
+    return timestamp + MAX_APPROVAL_AGE
 
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):

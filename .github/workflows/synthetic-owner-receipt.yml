@@ -2,7 +2,7 @@ name: Synthetic owner receipt
 
 on:
   pull_request_target:
-    branches: [main]
+    branches: [main, lab/app-required-check]
     types: [opened, synchronize, reopened]
 
 permissions:
@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: refs/heads/main
+          ref: ${{ github.event.pull_request.base.sha }}
           fetch-depth: 0
           persist-credentials: false
       - name: Run fixture tests from the trusted base

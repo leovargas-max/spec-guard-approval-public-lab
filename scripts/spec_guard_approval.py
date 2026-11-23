@@ -40,7 +40,7 @@ class ApprovalError(ValueError):
     pass
 
 
-ALLOWED_BASES = {"main", "lab/app-required-check"}
+ALLOWED_BASES = {"main", "lab/app-required-check-v2"}
 
 def require(condition, reason):
     if not condition:

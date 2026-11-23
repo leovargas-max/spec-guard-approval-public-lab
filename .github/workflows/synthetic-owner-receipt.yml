@@ -28,3 +28,5 @@ jobs:
           LAB_OWNER: ${{ github.repository_owner_id }}
           LAB_EVENT_HEAD: ${{ github.event.pull_request.head.sha }}
         run: python3 scripts/verify_public_lab.py
+
+# Synthetic trust-root change for a negative test.
